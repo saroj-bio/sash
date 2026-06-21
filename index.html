@@ -106,8 +106,6 @@ body::before{
     position:relative;
 }
 
-/* ================= GLASS FLOOR ================= */
-
 .carousel-wrap::after{
     content:"";
     position:absolute;
@@ -116,14 +114,12 @@ body::before{
     transform:translateX(-50%);
     width:85%;
     height:180px;
-
     background:linear-gradient(
         to bottom,
         rgba(255,255,255,0.08),
         rgba(255,255,255,0.02),
         rgba(0,0,0,0)
     );
-
     border-radius:50%;
     filter:blur(20px);
     opacity:0.8;
@@ -138,7 +134,6 @@ body::before{
     transform:translateX(-50%) scaleY(-1);
     width:80%;
     height:200px;
-
     background:inherit;
     opacity:0.12;
     filter:blur(8px);
@@ -152,7 +147,6 @@ body::before{
     width:100%;
     max-width:1400px;
     height: clamp(300px, 55vh, 560px);
-
     position:relative;
     perspective:1400px;
     display:flex;
@@ -189,7 +183,6 @@ body::before{
     display:flex;
     justify-content:center;
     margin-top:20px;
-    position:relative;
 }
 
 .heart-line{
@@ -209,64 +202,6 @@ body::before{
     background:#000;
     padding:0 10px;
     color:#ff4d6d;
-}
-
-/* ================= MOBILE FIX (UPDATED) ================= */
-/* 👇 THIS is the only real change */
-
-@media (max-width: 768px){
-
-    body{
-        padding:14px 8px;
-        overflow:hidden;
-    }
-
-    .main{
-        gap: 22px;
-    }
-
-    /* TIMER */
-    .timer{
-        gap:10px;
-        transform: scale(0.98);
-    }
-
-    .timer-box{
-        min-width:70px;
-        padding:10px 10px;
-    }
-
-    .timer-value{
-        font-size:20px;
-    }
-
-    .timer-label{
-        font-size:10px;
-    }
-
-    /* 🔥 SLIGHTLY BIGGER AGAIN */
-    .carousel{
-        height: 68vh;        /* increased */
-        perspective: 1300px; /* stronger depth */
-        animation: none;
-    }
-
-    .card{
-        width: clamp(175px, 58vw, 270px);
-        height: clamp(230px, 78vw, 360px);
-    }
-
-    .heart-line-wrapper{
-        margin-top: 6px;
-    }
-
-    .heart-line{
-        width:85%;
-    }
-
-    .heart{
-        font-size:17px;
-    }
 }
 
 </style>
@@ -289,7 +224,7 @@ body::before{
         <div class="carousel" id="carousel"></div>
     </div>
 
-    <!-- HEART LINE -->
+    <!-- HEART -->
     <div class="heart-line-wrapper">
         <div class="heart-line">
             <div class="heart">❤</div>
@@ -300,13 +235,16 @@ body::before{
 
 <script>
 
-/* TIMER */
+/* ================= TIMER ================= */
+
 const startDate = new Date("2025-12-25T00:00:00");
 
 function updateCounter(){
     const now = new Date();
-    let diff = Math.abs(now - startDate);
-    let total = Math.floor(diff / 1000);
+    let diff = now - startDate;
+    if(diff < 0) diff = Math.abs(diff);
+
+    const total = Math.floor(diff / 1000);
 
     document.getElementById("days").textContent = Math.floor(total / 86400);
     document.getElementById("hours").textContent = String(Math.floor((total % 86400)/3600)).padStart(2,"0");
@@ -317,14 +255,15 @@ function updateCounter(){
 setInterval(updateCounter,1000);
 updateCounter();
 
-
 /* ================= CAROUSEL ================= */
+
 const images = [
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500",
   "https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=500",
   "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=500",
   "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500",
   "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500",
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500",
   "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500",
 ];
 
@@ -333,45 +272,25 @@ const container = document.getElementById("carousel");
 let index = 0;
 const n = images.length;
 
-
-/* ================= AUTOPLAY ================= */
-let autoplayDelay = 5000; // change to 10000 for 10s
-let autoplay;
-
-function startAutoplay(){
-    stopAutoplay();
-    autoplay = setInterval(() => {
-        move(1);
-    }, autoplayDelay);
-}
-
-function stopAutoplay(){
-    clearInterval(autoplay);
-}
-
-function resetAutoplay(){
-    startAutoplay();
-}
-
+let startX = 0;
 
 /* ================= TOUCH ================= */
-let startX = 0;
 
 document.addEventListener("touchstart", e=>{
     startX = e.touches[0].clientX;
 });
 
 document.addEventListener("touchend", e=>{
-    let diff = startX - e.changedTouches[0].clientX;
+    let endX = e.changedTouches[0].clientX;
+    let diff = startX - endX;
 
     if(Math.abs(diff) > 50){
         move(diff > 0 ? 1 : -1);
-        resetAutoplay();
     }
 });
 
-
 /* ================= LAYOUT ================= */
+
 function getLayout(){
     const base = [
         { x:-520, z:-500, rotY:55, scale:0.55, blur:5, opacity:0.3 },
@@ -383,7 +302,13 @@ function getLayout(){
         { x:520,  z:-500, rotY:-55,scale:0.55, blur:5, opacity:0.3 },
     ];
 
-    return base.map(p => ({...p}));
+    const scale = Math.min(window.innerWidth / 1400, 1);
+
+    return base.map(p => ({
+        ...p,
+        x: p.x * scale,
+        z: p.z * scale
+    }));
 }
 
 function norm(d){
@@ -392,8 +317,8 @@ function norm(d){
     return d;
 }
 
-
 /* ================= BUILD ================= */
+
 function build(){
     container.innerHTML = "";
 
@@ -405,18 +330,16 @@ function build(){
         c.onclick = ()=>{
             index = i;
             update();
-            resetAutoplay();
         };
 
         container.appendChild(c);
     });
 
     update();
-    startAutoplay();
 }
 
-
 /* ================= UPDATE ================= */
+
 function update(){
     const layout = getLayout();
 
@@ -445,14 +368,37 @@ function update(){
     });
 }
 
-
 /* ================= MOVE ================= */
+
 function move(dir){
     index = (index + dir + n) % n;
     update();
 }
 
+/* ================= AUTOPLAY (NEW) ================= */
 
-/* ================= INIT ================= */
+let autoplayStarted = false;
+let autoplayInterval = null;
+
+function startAutoplay(){
+    autoplayInterval = setInterval(()=>{
+        move(1);
+    }, 5000); // every 5 seconds
+}
+
+/* start after 10 seconds */
+setTimeout(()=>{
+    startAutoplay();
+    autoplayStarted = true;
+}, 10000);
+
+/* ================= RESIZE ================= */
+
 window.addEventListener("resize", update);
+
 build();
+
+</script>
+
+</body>
+</html>
