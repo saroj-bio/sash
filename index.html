@@ -3,11 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Big Mobile Carousel</title>
+<title>SASH Carousel</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
 <style>
+
+/* ================= BASE ================= */
 
 *{
     margin:0;
@@ -17,14 +20,41 @@
 
 body{
     background:#000;
-    font-family:Arial;
-    overflow:hidden;
+    font-family:'Inter',sans-serif;
+    color:#fff;
     display:flex;
     justify-content:center;
-    align-items:center;
+    padding:50px 20px 30px;
+    overflow:hidden;
     min-height:100vh;
-    color:#fff;
 }
+
+/* ================= STAR BACKGROUND ================= */
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+
+    background-image:
+        radial-gradient(1px 1px at 20px 30px, #ffffff80, transparent),
+        radial-gradient(1px 1px at 120px 80px, #ffffff50, transparent),
+        radial-gradient(1px 1px at 260px 200px, #ffffff40, transparent),
+        radial-gradient(1px 1px at 400px 120px, #ffffff60, transparent),
+        radial-gradient(1px 1px at 600px 300px, #ffffff30, transparent);
+
+    background-size:900px 600px;
+    animation: drift 80s linear infinite;
+    opacity:0.4;
+}
+
+@keyframes drift{
+    0%   { transform: translate3d(0,0,0); }
+    100% { transform: translate3d(-80px, 120px, 0); }
+}
+
+/* ================= MAIN ================= */
 
 .main{
     width:100%;
@@ -32,7 +62,39 @@ body{
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:30px;
+    gap: clamp(40px, 8vh, 90px);
+    position:relative;
+}
+
+/* ================= TIMER ================= */
+
+.timer{
+    display:flex;
+    gap:14px;
+}
+
+.timer-box{
+    min-width:95px;
+    padding:14px 16px;
+    border-radius:16px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.15);
+    backdrop-filter:blur(18px);
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.timer-value{
+    font-size:28px;
+    font-weight:800;
+}
+
+.timer-label{
+    font-size:12px;
+    opacity:0.7;
+    text-transform:uppercase;
 }
 
 /* ================= CAROUSEL WRAP ================= */
@@ -41,32 +103,74 @@ body{
     width:100%;
     display:flex;
     justify-content:center;
+    position:relative;
+}
+
+/* ================= GLASS FLOOR ================= */
+
+.carousel-wrap::after{
+    content:"";
+    position:absolute;
+    bottom:-140px;
+    left:50%;
+    transform:translateX(-50%);
+    width:85%;
+    height:180px;
+
+    background:linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.08),
+        rgba(255,255,255,0.02),
+        rgba(0,0,0,0)
+    );
+
+    border-radius:50%;
+    filter:blur(20px);
+    opacity:0.8;
+    pointer-events:none;
+}
+
+.carousel-wrap::before{
+    content:"";
+    position:absolute;
+    bottom:-120px;
+    left:50%;
+    transform:translateX(-50%) scaleY(-1);
+    width:80%;
+    height:200px;
+
+    background:inherit;
+    opacity:0.12;
+    filter:blur(8px);
+    pointer-events:none;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
 }
 
 /* ================= CAROUSEL ================= */
 
 .carousel {
     width:100%;
-
-    /* 🔥 BIG MOBILE FIX */
-    height: clamp(500px, 80vh, 900px);
+    max-width:1400px;
+    height: clamp(300px, 55vh, 560px);
 
     position:relative;
-    perspective:900px;
+    perspective:1400px;
     display:flex;
     justify-content:center;
     align-items:center;
+    animation:float 6s ease-in-out infinite;
+    z-index:2;
 }
 
-/* ================= CARD ================= */
+@keyframes float{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+}
 
 .card {
     position:absolute;
-
-    /* 🔥 MUCH BIGGER MOBILE CARDS */
-    width: clamp(220px, 70vw, 340px);
-    height: clamp(320px, 85vw, 520px);
-
+    width:clamp(140px, 28vw, 260px);
+    height:clamp(200px, 45vw, 380px);
     border-radius:18px;
     overflow:hidden;
 }
@@ -75,12 +179,69 @@ body{
     width:100%;
     height:100%;
     object-fit:cover;
+    filter: contrast(1.05) brightness(1.05);
 }
 
-/* ================= TIMER (optional keep minimal) ================= */
+/* ================= HEART LINE ================= */
 
-.timer{
-    display:none;
+.heart-line-wrapper{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    margin-top:20px;
+    position:relative;
+}
+
+.heart-line{
+    width:60%;
+    height:2px;
+    background:rgba(255,255,255,0.25);
+    position:relative;
+    border-radius:10px;
+}
+
+.heart{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    font-size:18px;
+    background:#000;
+    padding:0 10px;
+    color:#ff4d6d;
+}
+
+/* ================= MOBILE FIX (UPDATED) ================= */
+/* 👇 THIS is the only real change */
+
+@media (max-width: 768px){
+
+    body{
+        padding:30px 10px;
+    }
+
+    .carousel{
+        height: 70vh; /* bigger carousel on mobile */
+        perspective: 1000px;
+    }
+
+    .card{
+        width: clamp(180px, 65vw, 320px);  /* bigger cards */
+        height: clamp(260px, 90vw, 420px);
+    }
+
+    .heart-line{
+        width:80%;
+    }
+
+    .timer-box{
+        min-width:70px;
+        padding:10px 12px;
+    }
+
+    .timer-value{
+        font-size:22px;
+    }
 }
 
 </style>
@@ -90,29 +251,64 @@ body{
 
 <div class="main">
 
+    <!-- TIMER -->
+    <div class="timer">
+        <div class="timer-box"><div class="timer-value" id="days">0</div><div class="timer-label">Days</div></div>
+        <div class="timer-box"><div class="timer-value" id="hours">00</div><div class="timer-label">Hours</div></div>
+        <div class="timer-box"><div class="timer-value" id="minutes">00</div><div class="timer-label">Minutes</div></div>
+        <div class="timer-box"><div class="timer-value" id="seconds">00</div><div class="timer-label">Seconds</div></div>
+    </div>
+
+    <!-- CAROUSEL -->
     <div class="carousel-wrap">
         <div class="carousel" id="carousel"></div>
+    </div>
+
+    <!-- HEART LINE -->
+    <div class="heart-line-wrapper">
+        <div class="heart-line">
+            <div class="heart">❤</div>
+        </div>
     </div>
 
 </div>
 
 <script>
 
+/* TIMER */
+const startDate = new Date("2025-12-25T00:00:00");
+
+function updateCounter(){
+    const now = new Date();
+    let diff = now - startDate;
+    if(diff < 0) diff = Math.abs(diff);
+
+    const total = Math.floor(diff / 1000);
+
+    document.getElementById("days").textContent = Math.floor(total / 86400);
+    document.getElementById("hours").textContent = String(Math.floor((total % 86400)/3600)).padStart(2,"0");
+    document.getElementById("minutes").textContent = String(Math.floor((total % 3600)/60)).padStart(2,"0");
+    document.getElementById("seconds").textContent = String(total % 60).padStart(2,"0");
+}
+
+setInterval(updateCounter,1000);
+updateCounter();
+
+/* CAROUSEL */
 const images = [
-  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
-  "https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=800",
-  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800",
-  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800",
-  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800",
+  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500",
+  "https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=500",
+  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=500",
+  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500",
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500",
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500",
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500",
 ];
 
 const container = document.getElementById("carousel");
 
 let index = 0;
 const n = images.length;
-
-/* ================= TOUCH ================= */
 
 let startX = 0;
 
@@ -121,25 +317,16 @@ document.addEventListener("touchstart", e=>{
 });
 
 document.addEventListener("touchend", e=>{
-    let diff = startX - e.changedTouches[0].clientX;
-    if(Math.abs(diff) > 40){
+    let endX = e.changedTouches[0].clientX;
+    let diff = startX - endX;
+
+    if(Math.abs(diff) > 50){
         move(diff > 0 ? 1 : -1);
     }
 });
 
-/* ================= LAYOUT ================= */
-
 function getLayout(){
-
-    const isMobile = window.innerWidth < 768;
-
-    const base = isMobile ? [
-        { x:-220, z:-200, rotY:40, scale:0.7, blur:3, opacity:0.4 },
-        { x:-120, z:-100, rotY:20, scale:0.85, blur:1, opacity:0.6 },
-        { x:0,    z:0,    rotY:0,  scale:1.35, blur:0, opacity:1 },
-        { x:120,  z:-100, rotY:-20,scale:0.85, blur:1, opacity:0.6 },
-        { x:220,  z:-200, rotY:-40,scale:0.7, blur:3, opacity:0.4 },
-    ] : [
+    const base = [
         { x:-520, z:-500, rotY:55, scale:0.55, blur:5, opacity:0.3 },
         { x:-340, z:-300, rotY:30, scale:0.7,  blur:3, opacity:0.5 },
         { x:-160, z:-120, rotY:12, scale:0.9,  blur:1, opacity:0.8 },
@@ -149,7 +336,13 @@ function getLayout(){
         { x:520,  z:-500, rotY:-55,scale:0.55, blur:5, opacity:0.3 },
     ];
 
-    return base;
+    const scale = Math.min(window.innerWidth / 1400, 1);
+
+    return base.map(p => ({
+        ...p,
+        x: p.x * scale,
+        z: p.z * scale
+    }));
 }
 
 function norm(d){
@@ -158,10 +351,7 @@ function norm(d){
     return d;
 }
 
-/* ================= BUILD ================= */
-
 function build(){
-
     container.innerHTML = "";
 
     images.forEach((src,i)=>{
@@ -169,7 +359,7 @@ function build(){
         c.className = "card";
         c.innerHTML = `<img src="${src}">`;
 
-        c.onclick = ()=> {
+        c.onclick = ()=>{
             index = i;
             update();
         };
@@ -180,17 +370,12 @@ function build(){
     update();
 }
 
-/* ================= UPDATE ================= */
-
 function update(){
-
     const layout = getLayout();
 
     document.querySelectorAll(".card").forEach((c,i)=>{
-
         let d = norm(i - index);
-
-        const p = layout[d + Math.floor(layout.length/2)];
+        let p = layout[d + 3];
 
         if(!p) return;
 
@@ -200,50 +385,27 @@ function update(){
             rotateY:p.rotY,
             scale:p.scale,
             opacity:p.opacity,
-            duration:0.9,
+            duration:1,
             ease:"power3.out"
         });
 
         gsap.to(c,{
             filter:`blur(${p.blur}px)`,
-            duration:0.9
+            duration:1
         });
 
         c.style.zIndex = 100 - Math.abs(d);
     });
 }
 
-/* ================= MOVE ================= */
-
 function move(dir){
     index = (index + dir + n) % n;
     update();
 }
 
-/* ================= AUTO SWIPE ================= */
-
-let firstDelay = true;
-
-function autoSwipe(){
-
-    setTimeout(()=>{
-
-        move(1);
-
-        // after first 10 sec → switch to 5 sec loop
-        setInterval(()=>{
-            move(1);
-        }, 5000);
-
-    }, 10000);
-}
-
-/* ================= INIT ================= */
+window.addEventListener("resize", update);
 
 build();
-autoSwipe();
-
-window.addEventListener("resize", update);
 
 </script>
 
