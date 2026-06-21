@@ -211,8 +211,7 @@ body::before{
     color:#ff4d6d;
 }
 
-/* ================= MOBILE FIX (UPDATED) ================= */
-/* 👇 THIS is the only real change */
+/* ================= MOBILE FIX ================= */
 
 @media (max-width: 768px){
 
@@ -225,7 +224,6 @@ body::before{
         gap: 24px;
     }
 
-    /* TIMER stays stable */
     .timer{
         gap:10px;
         transform: scale(0.95);
@@ -244,20 +242,19 @@ body::before{
         font-size:10px;
     }
 
-    /* 🔥 MAIN CHANGE: MORE ZOOM / IMPACT */
     .carousel{
-        height: 64vh;          /* increased from 58vh */
-        perspective: 1200px;   /* stronger depth = more “close” feel */
+        height: 64vh;
+        perspective: 1200px;
         animation: none;
     }
 
     .card{
-        width: clamp(165px, 56vw, 260px);  /* slightly bigger */
+        width: clamp(165px, 56vw, 260px);
         height: clamp(220px, 74vw, 340px);
     }
 
     .carousel-wrap::after{
-        bottom:-110px; /* pulls reflection closer so it feels zoomed-in */
+        bottom:-110px;
     }
 
     .heart-line-wrapper{
@@ -323,7 +320,6 @@ function updateCounter(){
 setInterval(updateCounter,1000);
 updateCounter();
 
-
 /* CAROUSEL */
 const images = [
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500",
@@ -340,28 +336,40 @@ const container = document.getElementById("carousel");
 let index = 0;
 const n = images.length;
 
-let startX = 0;
+/* ================= ONLY ADDITION (AUTO SWIPE) ================= */
 
-/* ---------------- AUTOPLAY CONTROL ---------------- */
+let autoStartTimer = null;
+let autoSwipeTimer = null;
 
-let autoStarted = false;
-let autoInterval;
+function startAutoSwipe(){
+    stopAutoSwipe();
 
-function startAutoSwipe() {
-    if (autoStarted) return;
-    autoStarted = true;
+    autoSwipeTimer = setInterval(()=>{
+        move(1);
+    }, 5000);
+}
 
-    setTimeout(() => {
-        autoInterval = setInterval(() => {
-            move(1);
-        }, 5000);
+function stopAutoSwipe(){
+    if(autoSwipeTimer) clearInterval(autoSwipeTimer);
+    autoSwipeTimer = null;
+}
+
+function resetAuto(){
+    stopAutoSwipe();
+
+    clearTimeout(autoStartTimer);
+    autoStartTimer = setTimeout(()=>{
+        startAutoSwipe();
     }, 10000);
 }
 
-/* ---------------- TOUCH CONTROLS ---------------- */
+/* ================= TOUCH (UPDATED ONLY ADD RESET) ================= */
+
+let startX = 0;
 
 document.addEventListener("touchstart", e=>{
     startX = e.touches[0].clientX;
+    resetAuto();
 });
 
 document.addEventListener("touchend", e=>{
@@ -371,9 +379,14 @@ document.addEventListener("touchend", e=>{
     if(Math.abs(diff) > 50){
         move(diff > 0 ? 1 : -1);
     }
+
+    resetAuto();
 });
 
-/* ---------------- LAYOUT ---------------- */
+/* click also resets */
+document.addEventListener("click", resetAuto);
+
+/* ================= ORIGINAL LOGIC BELOW (UNCHANGED) ================= */
 
 function getLayout(){
     const base = [
@@ -401,8 +414,6 @@ function norm(d){
     return d;
 }
 
-/* ---------------- BUILD ---------------- */
-
 function build(){
     container.innerHTML = "";
 
@@ -414,15 +425,15 @@ function build(){
         c.onclick = ()=>{
             index = i;
             update();
+            resetAuto();
         };
 
         container.appendChild(c);
     });
 
     update();
+    resetAuto(); // start idle timer
 }
-
-/* ---------------- UPDATE ---------------- */
 
 function update(){
     const layout = getLayout();
@@ -452,23 +463,16 @@ function update(){
     });
 }
 
-/* ---------------- MOVE ---------------- */
-
 function move(dir){
     index = (index + dir + n) % n;
     update();
-
-    // restart autoplay on user interaction (optional but good UX)
-    if (autoInterval) {
-        clearInterval(autoInterval);
-        autoStarted = false;
-        startAutoSwipe();
-    }
 }
-
-/* ---------------- INIT ---------------- */
 
 window.addEventListener("resize", update);
 
 build();
-startAutoSwipe();
+
+</script>
+
+</body>
+</html>
