@@ -217,52 +217,56 @@ body::before{
 @media (max-width: 768px){
 
     body{
-        padding:20px 10px;
+        padding:18px 10px;
         overflow:hidden;
     }
 
     .main{
-        gap: 25px; /* reduce vertical spacing */
+        gap: 28px;
     }
 
+    /* TIMER — keep readable, not tiny */
     .timer{
-        gap:8px;
-        transform: scale(0.85);
+        gap:10px;
+        transform: scale(0.92);
     }
 
     .timer-box{
-        min-width:60px;
-        padding:8px 10px;
+        min-width:65px;
+        padding:10px 10px;
     }
 
     .timer-value{
-        font-size:18px;
+        font-size:20px;
     }
 
     .timer-label{
         font-size:10px;
     }
 
+    /* CAROUSEL — MAIN FIX */
     .carousel{
-        height: 52vh;   /* 🔥 reduced so it fits screen */
-        perspective: 900px;
+        height: 58vh;     /* 👈 slightly bigger than before */
+        perspective: 1000px;
+        animation: none;   /* removes float so it feels more stable on mobile */
     }
 
     .card{
-        width: clamp(130px, 48vw, 220px);  /* smaller cards */
-        height: clamp(180px, 60vw, 300px);
+        width: clamp(150px, 52vw, 240px);
+        height: clamp(200px, 68vw, 320px);
     }
 
+    /* HEART */
     .heart-line-wrapper{
-        margin-top: 5px;
+        margin-top: 10px;
     }
 
     .heart-line{
-        width:75%;
+        width:78%;
     }
 
     .heart{
-        font-size:14px;
+        font-size:16px;
     }
 }
 
