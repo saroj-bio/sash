@@ -217,30 +217,52 @@ body::before{
 @media (max-width: 768px){
 
     body{
-        padding:30px 10px;
+        padding:20px 10px;
+        overflow:hidden;
     }
 
-    .carousel{
-        height: 70vh; /* bigger carousel on mobile */
-        perspective: 1000px;
+    .main{
+        gap: 25px; /* reduce vertical spacing */
     }
 
-    .card{
-        width: clamp(180px, 65vw, 320px);  /* bigger cards */
-        height: clamp(260px, 90vw, 420px);
-    }
-
-    .heart-line{
-        width:80%;
+    .timer{
+        gap:8px;
+        transform: scale(0.85);
     }
 
     .timer-box{
-        min-width:70px;
-        padding:10px 12px;
+        min-width:60px;
+        padding:8px 10px;
     }
 
     .timer-value{
-        font-size:22px;
+        font-size:18px;
+    }
+
+    .timer-label{
+        font-size:10px;
+    }
+
+    .carousel{
+        height: 52vh;   /* 🔥 reduced so it fits screen */
+        perspective: 900px;
+    }
+
+    .card{
+        width: clamp(130px, 48vw, 220px);  /* smaller cards */
+        height: clamp(180px, 60vw, 300px);
+    }
+
+    .heart-line-wrapper{
+        margin-top: 5px;
+    }
+
+    .heart-line{
+        width:75%;
+    }
+
+    .heart{
+        font-size:14px;
     }
 }
 
