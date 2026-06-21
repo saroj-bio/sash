@@ -305,10 +305,8 @@ const startDate = new Date("2025-12-25T00:00:00");
 
 function updateCounter(){
     const now = new Date();
-    let diff = now - startDate;
-    if(diff < 0) diff = Math.abs(diff);
-
-    const total = Math.floor(diff / 1000);
+    let diff = Math.abs(now - startDate);
+    let total = Math.floor(diff / 1000);
 
     document.getElementById("days").textContent = Math.floor(total / 86400);
     document.getElementById("hours").textContent = String(Math.floor((total % 86400)/3600)).padStart(2,"0");
@@ -319,14 +317,14 @@ function updateCounter(){
 setInterval(updateCounter,1000);
 updateCounter();
 
-/* CAROUSEL */
+
+/* ================= CAROUSEL ================= */
 const images = [
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500",
   "https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=500",
   "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=500",
   "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500",
   "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500",
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500",
   "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500",
 ];
 
@@ -335,6 +333,28 @@ const container = document.getElementById("carousel");
 let index = 0;
 const n = images.length;
 
+
+/* ================= AUTOPLAY ================= */
+let autoplayDelay = 5000; // change to 10000 for 10s
+let autoplay;
+
+function startAutoplay(){
+    stopAutoplay();
+    autoplay = setInterval(() => {
+        move(1);
+    }, autoplayDelay);
+}
+
+function stopAutoplay(){
+    clearInterval(autoplay);
+}
+
+function resetAutoplay(){
+    startAutoplay();
+}
+
+
+/* ================= TOUCH ================= */
 let startX = 0;
 
 document.addEventListener("touchstart", e=>{
@@ -342,14 +362,16 @@ document.addEventListener("touchstart", e=>{
 });
 
 document.addEventListener("touchend", e=>{
-    let endX = e.changedTouches[0].clientX;
-    let diff = startX - endX;
+    let diff = startX - e.changedTouches[0].clientX;
 
     if(Math.abs(diff) > 50){
         move(diff > 0 ? 1 : -1);
+        resetAutoplay();
     }
 });
 
+
+/* ================= LAYOUT ================= */
 function getLayout(){
     const base = [
         { x:-520, z:-500, rotY:55, scale:0.55, blur:5, opacity:0.3 },
@@ -361,13 +383,7 @@ function getLayout(){
         { x:520,  z:-500, rotY:-55,scale:0.55, blur:5, opacity:0.3 },
     ];
 
-    const scale = Math.min(window.innerWidth / 1400, 1);
-
-    return base.map(p => ({
-        ...p,
-        x: p.x * scale,
-        z: p.z * scale
-    }));
+    return base.map(p => ({...p}));
 }
 
 function norm(d){
@@ -376,6 +392,8 @@ function norm(d){
     return d;
 }
 
+
+/* ================= BUILD ================= */
 function build(){
     container.innerHTML = "";
 
@@ -387,14 +405,18 @@ function build(){
         c.onclick = ()=>{
             index = i;
             update();
+            resetAutoplay();
         };
 
         container.appendChild(c);
     });
 
     update();
+    startAutoplay();
 }
 
+
+/* ================= UPDATE ================= */
 function update(){
     const layout = getLayout();
 
@@ -423,16 +445,14 @@ function update(){
     });
 }
 
+
+/* ================= MOVE ================= */
 function move(dir){
     index = (index + dir + n) % n;
     update();
 }
 
+
+/* ================= INIT ================= */
 window.addEventListener("resize", update);
-
 build();
-
-</script>
-
-</body>
-</html>
