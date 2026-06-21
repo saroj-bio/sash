@@ -323,6 +323,7 @@ function updateCounter(){
 setInterval(updateCounter,1000);
 updateCounter();
 
+
 /* CAROUSEL */
 const images = [
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500",
@@ -341,6 +342,24 @@ const n = images.length;
 
 let startX = 0;
 
+/* ---------------- AUTOPLAY CONTROL ---------------- */
+
+let autoStarted = false;
+let autoInterval;
+
+function startAutoSwipe() {
+    if (autoStarted) return;
+    autoStarted = true;
+
+    setTimeout(() => {
+        autoInterval = setInterval(() => {
+            move(1);
+        }, 5000);
+    }, 10000);
+}
+
+/* ---------------- TOUCH CONTROLS ---------------- */
+
 document.addEventListener("touchstart", e=>{
     startX = e.touches[0].clientX;
 });
@@ -353,6 +372,8 @@ document.addEventListener("touchend", e=>{
         move(diff > 0 ? 1 : -1);
     }
 });
+
+/* ---------------- LAYOUT ---------------- */
 
 function getLayout(){
     const base = [
@@ -380,6 +401,8 @@ function norm(d){
     return d;
 }
 
+/* ---------------- BUILD ---------------- */
+
 function build(){
     container.innerHTML = "";
 
@@ -398,6 +421,8 @@ function build(){
 
     update();
 }
+
+/* ---------------- UPDATE ---------------- */
 
 function update(){
     const layout = getLayout();
@@ -427,16 +452,23 @@ function update(){
     });
 }
 
+/* ---------------- MOVE ---------------- */
+
 function move(dir){
     index = (index + dir + n) % n;
     update();
+
+    // restart autoplay on user interaction (optional but good UX)
+    if (autoInterval) {
+        clearInterval(autoInterval);
+        autoStarted = false;
+        startAutoSwipe();
+    }
 }
+
+/* ---------------- INIT ---------------- */
 
 window.addEventListener("resize", update);
 
 build();
-
-</script>
-
-</body>
-</html>
+startAutoSwipe();
