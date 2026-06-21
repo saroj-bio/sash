@@ -217,22 +217,22 @@ body::before{
 @media (max-width: 768px){
 
     body{
-        padding:18px 10px;
+        padding:16px 8px;
         overflow:hidden;
     }
 
     .main{
-        gap: 28px;
+        gap: 24px;
     }
 
-    /* TIMER — keep readable, not tiny */
+    /* TIMER stays stable */
     .timer{
         gap:10px;
-        transform: scale(0.92);
+        transform: scale(0.95);
     }
 
     .timer-box{
-        min-width:65px;
+        min-width:68px;
         padding:10px 10px;
     }
 
@@ -244,25 +244,28 @@ body::before{
         font-size:10px;
     }
 
-    /* CAROUSEL — MAIN FIX */
+    /* 🔥 MAIN CHANGE: MORE ZOOM / IMPACT */
     .carousel{
-        height: 58vh;     /* 👈 slightly bigger than before */
-        perspective: 1000px;
-        animation: none;   /* removes float so it feels more stable on mobile */
+        height: 64vh;          /* increased from 58vh */
+        perspective: 1200px;   /* stronger depth = more “close” feel */
+        animation: none;
     }
 
     .card{
-        width: clamp(150px, 52vw, 240px);
-        height: clamp(200px, 68vw, 320px);
+        width: clamp(165px, 56vw, 260px);  /* slightly bigger */
+        height: clamp(220px, 74vw, 340px);
     }
 
-    /* HEART */
+    .carousel-wrap::after{
+        bottom:-110px; /* pulls reflection closer so it feels zoomed-in */
+    }
+
     .heart-line-wrapper{
-        margin-top: 10px;
+        margin-top: 8px;
     }
 
     .heart-line{
-        width:78%;
+        width:82%;
     }
 
     .heart{
